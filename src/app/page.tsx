@@ -61,8 +61,8 @@ export default function Home() {
                   Shop Catalog <ChevronRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </Link>
               </Button>
-              <Button variant="outline" size="lg" className="h-14 px-8 font-headline text-sm uppercase tracking-widest border-primary/50 hover:bg-primary/10">
-                Custom Lab
+              <Button asChild variant="outline" size="lg" className="h-14 px-8 font-headline text-sm uppercase tracking-widest border-primary/50 hover:bg-primary/10">
+                <Link href="/custom">Custom Lab</Link>
               </Button>
             </div>
           </motion.div>
@@ -151,9 +151,9 @@ export default function Home() {
               WRAP<span className="text-accent">4</span>ALL
             </span>
             <div className="flex gap-8 font-headline text-xs uppercase tracking-widest">
-              <Link href="#" className="hover:text-primary transition-colors">Privacy</Link>
-              <Link href="#" className="hover:text-primary transition-colors">Terms</Link>
-              <Link href="#" className="hover:text-primary transition-colors">Shipping</Link>
+              <Link href="/about" className="hover:text-primary transition-colors">Privacy</Link>
+              <Link href="/about" className="hover:text-primary transition-colors">Terms</Link>
+              <Link href="/about" className="hover:text-primary transition-colors">Shipping</Link>
             </div>
             <p className="font-body text-xs text-muted-foreground">© 2024 WRAP4ALL. Engineered for the Gen-Z future.</p>
           </div>
