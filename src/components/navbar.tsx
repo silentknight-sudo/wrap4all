@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/hooks/use-auth';
 import { Button } from '@/components/ui/button';
-import { Shield, ShoppingBag, User, LogOut } from 'lucide-react';
+import { Shield, ShoppingBag, User, LogOut, LayoutDashboard, UserPlus } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,7 +16,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 export function Navbar() {
-  const { user, signIn, signOut, isAdmin } = useAuth();
+  const { user, signIn, signOut, isAdmin, grantAdminStatus } = useAuth();
   const [cartCount, setCartCount] = useState(0);
 
   useEffect(() => {
@@ -48,9 +48,9 @@ export function Navbar() {
 
         <div className="flex items-center gap-4">
           {isAdmin && (
-            <Link href="/admin">
-              <Button variant="ghost" size="icon" className="text-accent hover:text-accent/80">
-                <Shield className="h-5 w-5" />
+            <Link href="/admin" className="hidden sm:block">
+              <Button variant="ghost" size="sm" className="text-accent hover:text-accent/80 font-headline uppercase text-[10px] tracking-widest gap-2">
+                <Shield className="h-3 w-3" /> Admin Lab
               </Button>
             </Link>
           )}
@@ -83,8 +83,24 @@ export function Navbar() {
                 </div>
                 <DropdownMenuSeparator className="bg-primary/20" />
                 <DropdownMenuItem asChild className="cursor-pointer focus:bg-primary/10">
-                   <Link href="/orders">Orders</Link>
+                   <Link href="/orders">My Orders</Link>
                 </DropdownMenuItem>
+                
+                {isAdmin ? (
+                  <DropdownMenuItem asChild className="cursor-pointer focus:bg-primary/10 text-primary font-bold">
+                    <Link href="/admin" className="flex items-center gap-2">
+                      <LayoutDashboard className="h-4 w-4" /> Admin Dashboard
+                    </Link>
+                  </DropdownMenuItem>
+                ) : (
+                  <DropdownMenuItem 
+                    className="cursor-pointer focus:bg-accent/10 text-accent font-bold" 
+                    onClick={grantAdminStatus}
+                  >
+                    <UserPlus className="mr-2 h-4 w-4" /> Become Admin (Dev)
+                  </DropdownMenuItem>
+                )}
+
                 <DropdownMenuSeparator className="bg-primary/20" />
                 <DropdownMenuItem className="cursor-pointer focus:bg-destructive/10 text-destructive" onClick={signOut}>
                   <LogOut className="mr-2 h-4 w-4" /> Logout

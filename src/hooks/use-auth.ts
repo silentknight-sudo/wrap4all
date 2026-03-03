@@ -4,7 +4,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth as useFirebaseAuth, useFirestore } from '@/firebase';
 import { signInWithPopup, signOut as firebaseSignOut, onAuthStateChanged, User, GoogleAuthProvider } from 'firebase/auth';
-import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { doc, getDoc, setDoc, updateDoc, onSnapshot, serverTimestamp } from 'firebase/firestore';
 
 export function useAuth() {
   const auth = useFirebaseAuth();
@@ -16,36 +16,48 @@ export function useAuth() {
   useEffect(() => {
     if (!auth || !db) return;
 
-    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+    let unsubscribeDoc: (() => void) | undefined;
+
+    const unsubscribeAuth = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
         setUser(firebaseUser);
         
-        // Sync user to firestore
         const userRef = doc(db, 'users', firebaseUser.uid);
-        const userDoc = await getDoc(userRef);
         
-        if (!userDoc.exists()) {
-          const userData = {
-            id: firebaseUser.uid,
-            email: firebaseUser.email || '',
-            displayName: firebaseUser.displayName || 'Anonymous User',
-            photoURL: firebaseUser.photoURL || '',
-            isAdmin: false,
-            createdAt: new Date().toISOString(),
-          };
-          await setDoc(userRef, userData);
-          setIsAdmin(false);
-        } else {
-          setIsAdmin(userDoc.data().isAdmin === true);
-        }
+        // Listen for real-time updates to the user document (especially isAdmin flag)
+        unsubscribeDoc = onSnapshot(userRef, (docSnap) => {
+          if (docSnap.exists()) {
+            setIsAdmin(docSnap.data().isAdmin === true);
+          } else {
+            // Initial user creation
+            setDoc(userRef, {
+              id: firebaseUser.uid,
+              email: firebaseUser.email || '',
+              displayName: firebaseUser.displayName || 'Anonymous User',
+              photoURL: firebaseUser.photoURL || '',
+              isAdmin: false, // Default to false
+              createdAt: new Date().toISOString(),
+            });
+            setIsAdmin(false);
+          }
+          setLoading(false);
+        }, (error) => {
+          console.error("User doc listener error:", error);
+          setLoading(false);
+        });
+
       } else {
         setUser(null);
         setIsAdmin(false);
+        setLoading(false);
+        if (unsubscribeDoc) unsubscribeDoc();
       }
-      setLoading(false);
     });
 
-    return () => unsubscribe();
+    return () => {
+      unsubscribeAuth();
+      if (unsubscribeDoc) unsubscribeDoc();
+    };
   }, [auth, db]);
 
   const signIn = async () => {
@@ -67,5 +79,15 @@ export function useAuth() {
     }
   };
 
-  return { user, loading, isAdmin, signIn, signOut };
+  const grantAdminStatus = async () => {
+    if (!user || !db) return;
+    try {
+      const userRef = doc(db, 'users', user.uid);
+      await updateDoc(userRef, { isAdmin: true });
+    } catch (error) {
+      console.error('Grant admin error:', error);
+    }
+  };
+
+  return { user, loading, isAdmin, signIn, signOut, grantAdminStatus };
 }
