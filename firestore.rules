@@ -1,0 +1,115 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    /**
+     * Wrap4all.com Security Rules
+     * 
+     * Core Philosophy: 
+     * This ruleset enforces a strict user-ownership model for personal data (profiles and orders) 
+     * while maintaining a public-facing catalog for products and site settings. Administrative 
+     * actions are controlled via a verified 'isAdmin' flag stored on the user's profile.
+     * 
+     * Data Structure:
+     * - /users/{userId}: Private user profiles, where {userId} matches the Firebase Auth UID.
+     * - /products/{productId}: Public product catalog, writable only by administrators.
+     * - /orders/{orderId}: Customer purchase records, secured by a denormalized 'userId' field.
+     * - /settings/{settingId}: Global application configuration (e.g., themes), publicly readable.
+     * 
+     * Key Security Decisions:
+     * - Ownership via Path: User profiles are secured by matching the document ID to the Auth UID.
+     * - Ownership via Field: Orders are secured by checking the 'userId' field within the document.
+     * - Admin Role: A helper function performs a lookup on the user's document to verify 'isAdmin' status.
+     * - Prototyping Flexibility: Schema validation is omitted for content fields to allow rapid 
+     *   iteration, while relational integrity (UID matching) is strictly enforced.
+     */
+
+    // --- Helper Functions ---
+
+    /** Checks if the request is from an authenticated user. */
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    /** Checks if the authenticated user's UID matches the provided userId. */
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    /** 
+     * Checks if the authenticated user has administrative privileges.
+     * Performs a cross-document lookup to the user's profile.
+     */
+    function isAdmin() {
+      return isSignedIn() && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true;
+    }
+
+    // --- Collection Rules ---
+
+    /**
+     * @description Rules for user profiles. Users can manage their own profile.
+     * @path /users/{userId}
+     * @allow get, list, create, update, delete: if isOwner(userId);
+     * @deny update: if request.auth.uid != userId;
+     * @principle Path-based ownership: the document ID must match the Authenticated UID.
+     */
+    match /users/{userId} {
+      allow get, list: if isOwner(userId);
+      allow create: if isOwner(userId);
+      allow update: if isOwner(userId);
+      allow delete: if isOwner(userId);
+    }
+
+    /**
+     * @description Rules for the product catalog. Publicly readable, admin-only writes.
+     * @path /products/{productId}
+     * @allow get, list: if true; (Publicly accessible)
+     * @allow create, update, delete: if isAdmin();
+     * @deny create: if !isAdmin();
+     * @principle Global role-based access for inventory management.
+     */
+    match /products/{productId} {
+      allow get, list: if true;
+      allow create: if isAdmin();
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    /**
+     * @description Rules for customer orders. Secured by the 'userId' field within the document.
+     * @path /orders/{orderId}
+     * @allow get, list: if isSignedIn() && (resource.data.userId == request.auth.uid || isAdmin());
+     * @allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+     * @deny create: if request.resource.data.userId != request.auth.uid;
+     * @principle Ownership via denormalized field and relational integrity check.
+     */
+    match /orders/{orderId} {
+      // Allow the owner or an admin to read the order.
+      // Note: List operations require the client to filter by userId.
+      allow get, list: if isSignedIn() && (resource.data.userId == request.auth.uid || isAdmin());
+      
+      // Enforce that the user creating the order sets themselves as the owner.
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+      
+      // Only the owner or an admin can update or delete an order.
+      allow update: if isSignedIn() && (resource.data.userId == request.auth.uid || isAdmin());
+      allow delete: if isSignedIn() && (resource.data.userId == request.auth.uid || isAdmin());
+    }
+
+    /**
+     * @description Rules for global app settings (e.g., site theme).
+     * @path /settings/{settingId}
+     * @allow get, list: if true; (Publicly accessible for frontend theme application)
+     * @allow create, update, delete: if isAdmin();
+     * @deny update: if !isAdmin();
+     * @principle Public read-only access for configuration with administrative write control.
+     */
+    match /settings/{settingId} {
+      allow get, list: if true;
+      allow create: if isAdmin();
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+
+  }
+}

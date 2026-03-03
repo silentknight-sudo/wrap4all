@@ -1,0 +1,272 @@
+{
+  "entities": {
+    "User": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "User",
+      "type": "object",
+      "description": "Represents a user of the Wrap4all e-commerce platform, including customers and administrators.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the User entity. Corresponds to Firebase Authentication UID."
+        },
+        "email": {
+          "type": "string",
+          "description": "The user's email address.",
+          "format": "email"
+        },
+        "displayName": {
+          "type": "string",
+          "description": "The user's public display name."
+        },
+        "photoURL": {
+          "type": "string",
+          "description": "URL to the user's profile picture.",
+          "format": "uri"
+        },
+        "isAdmin": {
+          "type": "boolean",
+          "description": "Flag indicating if the user has administrative privileges. (Default: false)"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp when the user account was created.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "email",
+        "displayName",
+        "isAdmin",
+        "createdAt"
+      ]
+    },
+    "Product": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Product",
+      "type": "object",
+      "description": "Represents a physical product available for sale on Wrap4all.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Product entity."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the product, e.g., 'Carbon Fiber Phone Wrap'."
+        },
+        "category": {
+          "type": "string",
+          "description": "The broad category of the product, such as 'Mobile & Device Skins', 'Laptop Skins & Protection', 'Bags, Sleeves & Organizers', or 'Cards, Stickers & Add-ons'."
+        },
+        "price": {
+          "type": "number",
+          "description": "The price of the product in Indian Rupees (INR), e.g., 250."
+        },
+        "stockCount": {
+          "type": "number",
+          "description": "The current number of units of this product available in inventory."
+        },
+        "imageUrl": {
+          "type": "string",
+          "description": "URL to the product's main image stored in Firebase Storage.",
+          "format": "uri"
+        },
+        "customizable": {
+          "type": "boolean",
+          "description": "Indicates if the product offers customization options."
+        },
+        "description": {
+          "type": "string",
+          "description": "A detailed description of the product."
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "category",
+        "price",
+        "stockCount",
+        "imageUrl",
+        "customizable",
+        "description"
+      ]
+    },
+    "Order": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Order",
+      "type": "object",
+      "description": "Represents a customer's purchase order.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Order entity."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to the User who placed the order. (Relationship: User 1:N Order)"
+        },
+        "items": {
+          "type": "array",
+          "description": "An array of objects, each representing a product included in the order.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "totalAmount": {
+          "type": "number",
+          "description": "The total monetary amount of the order in Indian Rupees (INR)."
+        },
+        "status": {
+          "type": "string",
+          "description": "The current status of the order (e.g., 'Pending', 'Shipped', 'Delivered')."
+        },
+        "timestamp": {
+          "type": "string",
+          "description": "Timestamp when the order was placed.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "items",
+        "totalAmount",
+        "status",
+        "timestamp"
+      ]
+    },
+    "OrderItem": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "OrderItem",
+      "type": "object",
+      "description": "Represents a single product item within an order.",
+      "properties": {
+        "productId": {
+          "type": "string",
+          "description": "Reference to the Product purchased. (Relationship: Product 1:N OrderItem)"
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the product at the time of purchase."
+        },
+        "price": {
+          "type": "number",
+          "description": "The price of the single unit of the product at the time of purchase in Indian Rupees (INR)."
+        },
+        "quantity": {
+          "type": "number",
+          "description": "The quantity of this product item purchased in the order."
+        }
+      },
+      "required": [
+        "productId",
+        "name",
+        "price",
+        "quantity"
+      ]
+    },
+    "Setting": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Setting",
+      "type": "object",
+      "description": "Represents global application settings, such as theme preferences.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Setting entity. Expected to be 'appearance' for theme settings."
+        },
+        "activeTheme": {
+          "type": "string",
+          "description": "The currently active global site theme ('Cyber-Neon', 'Minimalist', or 'Retro')."
+        },
+        "lastUpdated": {
+          "type": "string",
+          "description": "Timestamp when the setting was last updated.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "activeTheme",
+        "lastUpdated"
+      ]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/users/{userId}",
+        "definition": {
+          "entityName": "User",
+          "schema": {
+            "$ref": "#/backend/entities/User"
+          },
+          "description": "Collection of user profiles. The `userId` (document ID) corresponds to the Firebase Authentication UID. Each document contains user-specific details including the `isAdmin` flag, enabling path-based ownership for secure, self-management rules.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier of the user, matching their Firebase Authentication UID."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/products/{productId}",
+        "definition": {
+          "entityName": "Product",
+          "schema": {
+            "$ref": "#/backend/entities/Product"
+          },
+          "description": "Collection of all products available for sale. Publicly readable for all users. Write access (create, update, delete) is restricted to authenticated administrators, whose `isAdmin` status is checked from their respective `/users/{uid}` document.",
+          "params": [
+            {
+              "name": "productId",
+              "description": "The unique identifier of the product."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/orders/{orderId}",
+        "definition": {
+          "entityName": "Order",
+          "schema": {
+            "$ref": "#/backend/entities/Order"
+          },
+          "description": "Collection of customer purchase orders. Each order document includes the `userId` (or `customerUid`) for authorization independence, allowing users to securely read/update their own orders. The `items` array within each order document is designed to store denormalized `OrderItem` details (productId, name, price, quantity) at the time of purchase, ensuring transactional integrity and preserving historical pricing.",
+          "params": [
+            {
+              "name": "orderId",
+              "description": "The unique identifier of the order."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/settings/{settingId}",
+        "definition": {
+          "entityName": "Setting",
+          "schema": {
+            "$ref": "#/backend/entities/Setting"
+          },
+          "description": "Collection for global application settings. This collection contains a single document ('appearance') for managing the active site theme. It is publicly readable for frontend theme display but write access is restricted to administrators.",
+          "params": [
+            {
+              "name": "settingId",
+              "description": "The unique identifier for the setting (e.g., 'appearance')."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "The Firestore structure for Wrap4all.com is meticulously designed to be secure, scalable, and highly debuggable, prioritizing the core principles outlined. It aims to minimize complexity in security rules through structural segregation and strategic denormalization.\n\n**Authorization Independence via Denormalization:**\n*   **User Profiles (`/users/{userId}`):** User data is stored in a top-level collection where the document ID (`userId`) directly corresponds to the Firebase Authentication UID. This enables explicit, path-based ownership, allowing users to securely read and write their own profiles without cross-document reads (`get()`). The `isAdmin` flag, critical for administrative access, is stored directly within each user's document.\n*   **Products (`/products/{productId}`):** Products reside in a top-level collection, making them universally readable (`allow read: if true`) for all users, which simplifies product discovery. Write operations (create, update, delete) are strictly limited to administrators. This global role check is performed using the `isAdmin()` helper function in security rules, which uses a `get()` call on the requesting user's `/users/{uid}` document. This specific use of `get()` for a global role check is an accepted pattern and does not introduce brittle, hierarchical authorization dependencies for the actual product data operations themselves. It ensures administrative actions are secure without impacting transactional atomicity for regular data.\n*   **Orders (`/orders/{orderId}`):** Orders are a top-level collection. Each `Order` document explicitly includes the `userId` (or `customerUid` as in the provided rules) of the customer. This critical denormalization makes orders authorization independent: security rules can evaluate ownership directly from `resource.data.userId == request.auth.uid` without needing to perform a `get()` on a parent user document. This design enables robust atomic operations for order creation and updates. Furthermore, the `items` array within each `Order` document denormalizes the complete product details (`productId`, `name`, `price`, `quantity`) at the time of purchase, aligning with the `OrderItem` schema. This ensures transactional integrity by preserving historical pricing and preventing price changes from affecting past orders, removing the need for additional lookups.\n*   **Settings (`/settings/{settingId}`):** Global application settings (e.g., active theme) are stored in a top-level collection. The specific `appearance` document is publicly readable to allow the frontend to fetch the current theme without authentication. Write access is restricted to administrators using the `isAdmin()` helper, ensuring only authorized personnel can modify global site preferences.\n\n**Querying for Authorization & QAPs (Rules are not Filters):**\n*   **Products & Settings:** For these collections, the `allow read: if true` rule means that any client can list all documents efficiently, satisfying QAPs. Security rules are not used as filters here because the data is intended to be publicly accessible for reading.\n*   **Orders:** Users can only view their own orders. The application will issue queries like `db.collection('orders').where('userId', '==', request.auth.uid)`. The security rules will then validate this query, ensuring that `request.auth.uid` matches the `userId` field of the documents being queried. This adheres to QAPs because the rules enforce the query constraints *before* data is returned, preventing the need for post-query filtering on the client side or insecure broad reads. Administrators, with their global read permissions, can list all orders directly.\n\n**Structural Segregation and Consistency:**\n*   Each collection adheres to the Structural Segregation mandate, maintaining a homogeneous security posture. For instance, all documents within `/products` share the same read/write access pattern (public read, admin write). This significantly simplifies and clarifies security rules.\n*   Consistent naming conventions are employed for collection paths and wildcards (e.g., `{userId}`, `{productId}`). Key authorization fields, such as `userId` within the `Order` entity, are consistently used across the structure."
+  }
+}
