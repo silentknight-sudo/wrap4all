@@ -10,7 +10,9 @@ import {
   GoogleAuthProvider,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
-  updateProfile
+  updateProfile,
+  updateEmail,
+  updatePassword
 } from 'firebase/auth';
 import { doc, setDoc, updateDoc, onSnapshot } from 'firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
@@ -146,5 +148,57 @@ export function useAuth() {
     }
   };
 
-  return { user, loading, isAdmin, signIn, loginWithEmail, signupWithEmail, signOut, grantAdminStatus };
+  const updateProfileData = async (name: string, photoURL: string) => {
+    if (!user || !db) return;
+    try {
+      await updateProfile(user, { displayName: name, photoURL });
+      const userRef = doc(db, 'users', user.uid);
+      await updateDoc(userRef, { displayName: name, photoURL });
+      toast({ title: "Profile Synced", description: "Your neural identity has been updated." });
+    } catch (error: any) {
+      toast({ variant: "destructive", title: "Sync Failed", description: error.message });
+    }
+  };
+
+  const changeEmail = async (newEmail: string) => {
+    if (!user) return;
+    try {
+      await updateEmail(user, newEmail);
+      toast({ title: "Email Updated", description: "Identity relay shifted to " + newEmail });
+    } catch (error: any) {
+      if (error.code === 'auth/requires-recent-login') {
+        toast({ variant: "destructive", title: "Action Blocked", description: "Please re-authenticate to change sensitive data." });
+      } else {
+        toast({ variant: "destructive", title: "Relay Failed", description: error.message });
+      }
+    }
+  };
+
+  const changePassword = async (newPass: string) => {
+    if (!user) return;
+    try {
+      await updatePassword(user, newPass);
+      toast({ title: "Protocol Updated", description: "Your access password has been rotated." });
+    } catch (error: any) {
+      if (error.code === 'auth/requires-recent-login') {
+        toast({ variant: "destructive", title: "Action Blocked", description: "Please re-authenticate to rotate protocols." });
+      } else {
+        toast({ variant: "destructive", title: "Protocol Failure", description: error.message });
+      }
+    }
+  };
+
+  return { 
+    user, 
+    loading, 
+    isAdmin, 
+    signIn, 
+    loginWithEmail, 
+    signupWithEmail, 
+    signOut, 
+    grantAdminStatus,
+    updateProfileData,
+    changeEmail,
+    changePassword
+  };
 }

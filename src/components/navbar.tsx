@@ -102,12 +102,19 @@ export function Navbar() {
                   </div>
                   <DropdownMenuSeparator className="bg-white/5" />
                   <DropdownMenuItem asChild className="cursor-pointer focus:bg-primary/10 rounded-xl py-2">
-                     <Link href="/orders" className="font-headline uppercase text-[10px] tracking-widest">Orders</Link>
+                     <Link href="/profile" className="w-full font-headline uppercase text-[10px] tracking-widest flex items-center gap-2">
+                        <User className="h-3 w-3" /> Profile Core
+                     </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild className="cursor-pointer focus:bg-primary/10 rounded-xl py-2">
+                     <Link href="/orders" className="w-full font-headline uppercase text-[10px] tracking-widest flex items-center gap-2">
+                        <ShoppingBag className="h-3 w-3" /> Deployments
+                     </Link>
                   </DropdownMenuItem>
                   
                   {isAdmin ? (
                     <DropdownMenuItem asChild className="cursor-pointer focus:bg-primary/10 text-primary rounded-xl py-2">
-                      <Link href="/admin" className="flex items-center gap-2 font-headline uppercase text-[10px] tracking-widest">
+                      <Link href="/admin" className="flex items-center gap-2 font-headline uppercase text-[10px] tracking-widest w-full">
                         <LayoutDashboard className="h-3 w-3" /> Dashboard
                       </Link>
                     </DropdownMenuItem>
@@ -152,6 +159,7 @@ export function Navbar() {
               <Link href="/products" onClick={() => setIsMobileMenuOpen(false)}>Armory</Link>
               <Link href="/custom" onClick={() => setIsMobileMenuOpen(false)}>Lab</Link>
               <Link href="/about" onClick={() => setIsMobileMenuOpen(false)}>Drops</Link>
+              {user && <Link href="/profile" onClick={() => setIsMobileMenuOpen(false)}>Profile</Link>}
               {isAdmin && (
                 <Link href="/admin" className="text-accent" onClick={() => setIsMobileMenuOpen(false)}>Admin Panel</Link>
               )}
