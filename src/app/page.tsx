@@ -1,4 +1,3 @@
-
 'use client';
 
 import { Navbar } from '@/components/navbar';
@@ -7,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 import { ChevronRight, Zap, ShieldCheck, Cpu } from 'lucide-react';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
+import Link from 'next/link';
 
 export default function Home() {
   const heroImage = PlaceHolderImages.find(img => img.id === 'hero-bg')?.imageUrl;
