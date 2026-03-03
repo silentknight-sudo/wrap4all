@@ -1,0 +1,29 @@
+
+{
+  "placeholderImages": [
+    {
+      "id": "hero-bg",
+      "description": "Futuristic neon city background",
+      "imageUrl": "https://picsum.photos/seed/cyber1/1200/800",
+      "imageHint": "cyberpunk neon"
+    },
+    {
+      "id": "product-carbon",
+      "description": "Carbon fiber texture phone wrap",
+      "imageUrl": "https://picsum.photos/seed/wrap1/600/600",
+      "imageHint": "carbon fiber"
+    },
+    {
+      "id": "product-neon",
+      "description": "Electric blue phone wrap",
+      "imageUrl": "https://picsum.photos/seed/wrap2/600/600",
+      "imageHint": "neon blue"
+    },
+    {
+      "id": "product-retro",
+      "description": "Retro wave style phone wrap",
+      "imageUrl": "https://picsum.photos/seed/wrap3/600/600",
+      "imageHint": "retrowave aesthetic"
+    }
+  ]
+}
