@@ -8,22 +8,58 @@
       "imageHint": "cyberpunk neon"
     },
     {
-      "id": "product-carbon",
-      "description": "Carbon fiber texture phone wrap",
-      "imageUrl": "https://picsum.photos/seed/wrap1/600/600",
-      "imageHint": "carbon fiber"
+      "id": "mobile-standard",
+      "description": "Textured phone skin",
+      "imageUrl": "https://picsum.photos/seed/mobile1/600/600",
+      "imageHint": "phone skin"
     },
     {
-      "id": "product-neon",
-      "description": "Electric blue phone wrap",
-      "imageUrl": "https://picsum.photos/seed/wrap2/600/600",
-      "imageHint": "neon blue"
+      "id": "mobile-3d",
+      "description": "3D embossed phone skin",
+      "imageUrl": "https://picsum.photos/seed/3dskin/600/600",
+      "imageHint": "embossed texture"
     },
     {
-      "id": "product-retro",
-      "description": "Retro wave style phone wrap",
-      "imageUrl": "https://picsum.photos/seed/wrap3/600/600",
-      "imageHint": "retrowave aesthetic"
+      "id": "laptop-skin",
+      "description": "Cyberpunk laptop wrap",
+      "imageUrl": "https://picsum.photos/seed/laptop1/600/600",
+      "imageHint": "laptop skin"
+    },
+    {
+      "id": "laptop-3d",
+      "description": "Premium 3D gaming laptop skin",
+      "imageUrl": "https://picsum.photos/seed/gtr3d/600/600",
+      "imageHint": "gaming laptop"
+    },
+    {
+      "id": "macbook-shell",
+      "description": "Transparent crystal case for MacBook",
+      "imageUrl": "https://picsum.photos/seed/shell/600/600",
+      "imageHint": "laptop case"
+    },
+    {
+      "id": "tech-sleeve",
+      "description": "Leather tech organizer sleeve",
+      "imageUrl": "https://picsum.photos/seed/sleeve1/600/600",
+      "imageHint": "tech sleeve"
+    },
+    {
+      "id": "desk-mat",
+      "description": "Large neon desk mat",
+      "imageUrl": "https://picsum.photos/seed/mat1/600/600",
+      "imageHint": "desk mat"
+    },
+    {
+      "id": "camera-wrap",
+      "description": "Professional camera skin",
+      "imageUrl": "https://picsum.photos/seed/camera1/600/600",
+      "imageHint": "camera skin"
+    },
+    {
+      "id": "card-skin",
+      "description": "Vinyl card skin",
+      "imageUrl": "https://picsum.photos/seed/card1/600/600",
+      "imageHint": "vinyl skin"
     }
   ]
 }

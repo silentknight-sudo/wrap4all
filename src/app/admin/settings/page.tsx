@@ -2,8 +2,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { doc, getDoc, setDoc, updateDoc, serverTimestamp } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { useFirestore } from '@/firebase';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
@@ -12,11 +12,13 @@ import { useToast } from '@/hooks/use-toast';
 import { Palette, Monitor, Zap } from 'lucide-react';
 
 export default function AdminSettings() {
+  const db = useFirestore();
   const [activeTheme, setActiveTheme] = useState('Cyber-Neon');
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
   useEffect(() => {
+    if (!db) return;
     async function fetchSettings() {
       const docRef = doc(db, 'settings', 'appearance');
       const docSnap = await getDoc(docRef);
@@ -26,9 +28,10 @@ export default function AdminSettings() {
       setLoading(false);
     }
     fetchSettings();
-  }, []);
+  }, [db]);
 
   const handleSaveTheme = async () => {
+    if (!db) return;
     try {
       const docRef = doc(db, 'settings', 'appearance');
       await setDoc(docRef, {
@@ -49,7 +52,11 @@ export default function AdminSettings() {
     }
   };
 
-  if (loading) return <div>Loading settings...</div>;
+  if (loading) return (
+    <div className="flex h-screen items-center justify-center">
+      <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full" />
+    </div>
+  );
 
   return (
     <div className="max-w-4xl space-y-8">

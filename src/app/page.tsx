@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Navbar } from '@/components/navbar';
@@ -6,45 +7,20 @@ import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 import { ChevronRight, Zap, ShieldCheck, Cpu } from 'lucide-react';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { useCollection, useMemoFirebase, useFirestore } from '@/firebase';
+import { collection, query, limit, orderBy } from 'firebase/firestore';
 import Link from 'next/link';
 
 export default function Home() {
+  const db = useFirestore();
   const heroImage = PlaceHolderImages.find(img => img.id === 'hero-bg')?.imageUrl;
 
-  const featuredProducts = [
-    {
-      id: '1',
-      name: 'NEON CARBON ULTRA',
-      price: 29.99,
-      imageUrl: 'https://picsum.photos/seed/wrap1/600/600',
-      category: 'Skin',
-      stockCount: 15
-    },
-    {
-      id: '2',
-      name: 'CYBERPUNK GLITCH',
-      price: 34.99,
-      imageUrl: 'https://picsum.photos/seed/wrap2/600/600',
-      category: 'Hybrid',
-      stockCount: 5
-    },
-    {
-      id: '3',
-      name: 'MINIMAL MATTE VIBE',
-      price: 24.99,
-      imageUrl: 'https://picsum.photos/seed/wrap3/600/600',
-      category: 'Tempered',
-      stockCount: 20
-    },
-    {
-      id: '4',
-      name: 'RETRO WAVE 84',
-      price: 32.99,
-      imageUrl: 'https://picsum.photos/seed/wrap4/600/600',
-      category: 'Skin',
-      stockCount: 8
-    }
-  ];
+  const featuredQuery = useMemoFirebase(() => {
+    if (!db) return null;
+    return query(collection(db, 'products'), limit(4), orderBy('createdAt', 'desc'));
+  }, [db]);
+
+  const { data: featuredProducts, isLoading } = useCollection(featuredQuery);
 
   return (
     <div className="min-h-screen bg-background text-foreground overflow-x-hidden">
@@ -77,20 +53,22 @@ export default function Home() {
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">YOUR TECH</span>
             </h1>
             <p className="mx-auto mb-10 max-w-2xl font-body text-lg text-muted-foreground md:text-xl">
-              Precision-cut wraps for your devices. High-performance materials designed for the digital generation.
+              Precision-cut wraps starting at just ₹250. Engineered for the digital generation with premium high-performance materials.
             </p>
             <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
-              <Button size="lg" className="group h-14 px-8 font-headline text-sm uppercase tracking-widest bg-primary hover:bg-primary/90 glow-primary">
-                Shop Collection <ChevronRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+              <Button asChild size="lg" className="group h-14 px-8 font-headline text-sm uppercase tracking-widest bg-primary hover:bg-primary/90 glow-primary">
+                <Link href="/products">
+                  Shop Catalog <ChevronRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                </Link>
               </Button>
-              <Button size="lg" variant="outline" className="h-14 px-8 font-headline text-sm uppercase tracking-widest border-primary/50 hover:bg-primary/10">
-                Custom Creator
+              <Button variant="outline" size="lg" className="h-14 px-8 font-headline text-sm uppercase tracking-widest border-primary/50 hover:bg-primary/10">
+                Custom Lab
               </Button>
             </div>
           </motion.div>
         </div>
 
-        {/* Floating Elements for 3D Feel */}
+        {/* Floating Elements */}
         <motion.div 
           animate={{ y: [0, -20, 0], rotate: [0, 5, 0] }}
           transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
@@ -116,21 +94,21 @@ export default function Home() {
                 <Zap className="h-8 w-8" />
               </div>
               <h3 className="font-headline text-xl font-bold uppercase">Zero-Bulk Armor</h3>
-              <p className="font-body text-muted-foreground">Ultra-thin skins that offer military-grade scratch protection without adding weight.</p>
+              <p className="font-body text-muted-foreground">Ultra-thin skins offering military-grade scratch protection without adding perceptible weight.</p>
             </div>
             <div className="flex flex-col items-center text-center gap-4 group">
               <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-accent/10 text-accent transition-transform group-hover:scale-110">
                 <Cpu className="h-8 w-8" />
               </div>
-              <h3 className="font-headline text-xl font-bold uppercase">Precision CAD</h3>
-              <p className="font-body text-muted-foreground">Every wrap is custom-designed using laser-precision measurements for a 1:1 perfect fit.</p>
+              <h3 className="font-headline text-xl font-bold uppercase">Laser Precision</h3>
+              <p className="font-body text-muted-foreground">Every wrap is custom-designed using advanced CAD measurements for a 1:1 holographic fit.</p>
             </div>
             <div className="flex flex-col items-center text-center gap-4 group">
               <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-primary transition-transform group-hover:scale-110">
                 <ShieldCheck className="h-8 w-8" />
               </div>
-              <h3 className="font-headline text-xl font-bold uppercase">High-Heat Grip</h3>
-              <p className="font-body text-muted-foreground">Specialized adhesive that actually improves grip under high device temperatures.</p>
+              <h3 className="font-headline text-xl font-bold uppercase">Heat-Sync Grip</h3>
+              <p className="font-body text-muted-foreground">Specialized micro-channel adhesive that actually improves grip as your device warms up.</p>
             </div>
           </div>
         </div>
@@ -144,35 +122,29 @@ export default function Home() {
               <h2 className="font-headline text-4xl font-black uppercase tracking-tight md:text-5xl">New Drops</h2>
               <p className="font-body text-muted-foreground mt-2">Limited edition textures fresh from the lab.</p>
             </div>
-            <Button variant="link" className="font-headline uppercase tracking-widest text-accent hover:text-primary p-0">
-              View All Arrivals
+            <Button asChild variant="link" className="font-headline uppercase tracking-widest text-accent hover:text-primary p-0">
+              <Link href="/products">View All Arrivals</Link>
             </Button>
           </div>
 
-          <div className="perspective-1000 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
-            {featuredProducts.map((product) => (
-              <ProductCard key={product.id} {...product} />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-24 container mx-auto px-4">
-        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-primary to-accent p-12 text-center text-white md:p-24 shadow-2xl">
-          <div className="absolute inset-0 bg-[url('https://picsum.photos/seed/texture/800/400')] opacity-10 mix-blend-overlay" />
-          <div className="relative z-10 max-w-3xl mx-auto">
-            <h2 className="font-headline text-4xl font-black uppercase md:text-6xl mb-6">Want to Create?</h2>
-            <p className="font-body text-lg opacity-90 mb-10">Upload your own design and build a 1-of-1 wrap that screams YOU.</p>
-            <Button variant="secondary" size="lg" className="h-14 px-10 font-headline uppercase tracking-widest hover:scale-105 transition-transform bg-white text-primary">
-              Launch Creator
-            </Button>
-          </div>
+          {isLoading ? (
+             <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
+               {[...Array(4)].map((_, i) => (
+                 <div key={i} className="h-96 rounded-xl bg-card animate-pulse border border-primary/5" />
+               ))}
+             </div>
+          ) : (
+            <div className="perspective-1000 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
+              {featuredProducts?.map((product) => (
+                <ProductCard key={product.id} {...product} />
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-primary/10 py-16">
+      <footer className="border-t border-primary/10 py-16 bg-card/20">
         <div className="container mx-auto px-4">
           <div className="flex flex-col items-center justify-between gap-8 md:flex-row">
             <span className="font-headline text-2xl font-bold tracking-tighter text-primary">
@@ -183,7 +155,7 @@ export default function Home() {
               <Link href="#" className="hover:text-primary transition-colors">Terms</Link>
               <Link href="#" className="hover:text-primary transition-colors">Shipping</Link>
             </div>
-            <p className="font-body text-xs text-muted-foreground">© 2024 WRAP4ALL. Engineered for the future.</p>
+            <p className="font-body text-xs text-muted-foreground">© 2024 WRAP4ALL. Engineered for the Gen-Z future.</p>
           </div>
         </div>
       </footer>

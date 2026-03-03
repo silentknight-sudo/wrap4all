@@ -3,7 +3,7 @@
 
 import * as React from 'react';
 import { doc, onSnapshot } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import { useFirestore } from '@/firebase';
 
 type Theme = 'Cyber-Neon' | 'Minimalist' | 'Retro';
 
@@ -15,21 +15,24 @@ interface ThemeContextType {
 const ThemeContext = React.createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
+  const firestore = useFirestore();
   const [theme, setThemeState] = React.useState<Theme>('Cyber-Neon');
 
   React.useEffect(() => {
+    if (!firestore) return;
+    
     // Listen to firestore for global theme changes
-    const unsub = onSnapshot(doc(db, 'settings', 'appearance'), (doc) => {
-      if (doc.exists()) {
-        const data = doc.data();
+    const unsub = onSnapshot(doc(firestore, 'settings', 'appearance'), (docSnap) => {
+      if (docSnap.exists()) {
+        const data = docSnap.data();
         if (data.activeTheme) {
-          setThemeState(data.activeTheme);
+          setThemeState(data.activeTheme as Theme);
         }
       }
     });
 
     return () => unsub();
-  }, []);
+  }, [firestore]);
 
   React.useEffect(() => {
     const root = window.document.documentElement;

@@ -1,10 +1,11 @@
 
 'use client';
 
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/hooks/use-auth';
 import { Button } from '@/components/ui/button';
-import { Shield, ShoppingBag, User, LogOut, Menu } from 'lucide-react';
+import { Shield, ShoppingBag, User, LogOut } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,6 +17,19 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 export function Navbar() {
   const { user, signIn, signOut, isAdmin } = useAuth();
+  const [cartCount, setCartCount] = useState(0);
+
+  useEffect(() => {
+    const updateCount = () => {
+      const cart = JSON.parse(localStorage.getItem('wrap4all-cart') || '[]');
+      const count = cart.reduce((acc: number, item: any) => acc + item.quantity, 0);
+      setCartCount(count);
+    };
+
+    updateCount();
+    window.addEventListener('cart-updated', updateCount);
+    return () => window.removeEventListener('cart-updated', updateCount);
+  }, []);
 
   return (
     <nav className="sticky top-0 z-50 w-full border-b border-primary/20 bg-background/80 backdrop-blur-lg">
@@ -41,12 +55,16 @@ export function Navbar() {
             </Link>
           )}
 
-          <Button variant="ghost" size="icon" className="relative">
-            <ShoppingBag className="h-5 w-5" />
-            <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] text-white">
-              0
-            </span>
-          </Button>
+          <Link href="/cart">
+            <Button variant="ghost" size="icon" className="relative">
+              <ShoppingBag className="h-5 w-5" />
+              {cartCount > 0 && (
+                <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] text-white animate-in zoom-in">
+                  {cartCount}
+                </span>
+              )}
+            </Button>
+          </Link>
 
           {user ? (
             <DropdownMenu>
@@ -64,8 +82,9 @@ export function Navbar() {
                   <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
                 </div>
                 <DropdownMenuSeparator className="bg-primary/20" />
-                <DropdownMenuItem className="cursor-pointer focus:bg-primary/10">Orders</DropdownMenuItem>
-                <DropdownMenuItem className="cursor-pointer focus:bg-primary/10">Settings</DropdownMenuItem>
+                <DropdownMenuItem asChild className="cursor-pointer focus:bg-primary/10">
+                   <Link href="/orders">Orders</Link>
+                </DropdownMenuItem>
                 <DropdownMenuSeparator className="bg-primary/20" />
                 <DropdownMenuItem className="cursor-pointer focus:bg-destructive/10 text-destructive" onClick={signOut}>
                   <LogOut className="mr-2 h-4 w-4" /> Logout
@@ -73,7 +92,7 @@ export function Navbar() {
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            <Button onClick={signIn} className="font-headline uppercase text-xs">
+            <Button onClick={signIn} className="font-headline uppercase text-xs glow-primary">
               Connect
             </Button>
           )}
