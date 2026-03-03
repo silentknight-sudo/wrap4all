@@ -5,10 +5,10 @@ import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
-import { TrendingUp, Package, ShoppingBag, DollarSign, AlertCircle, Sparkles, Database } from 'lucide-react';
+import { TrendingUp, Package, ShoppingBag, DollarSign, AlertCircle, Database } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useFirestore } from '@/firebase';
-import { collection, addDoc, getDocs, query, limit } from 'firebase/firestore';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
 
 export default function AdminDashboard() {
@@ -38,29 +38,45 @@ export default function AdminDashboard() {
     setSeeding(true);
     
     const products = [
-      { name: "Cyber Carbon Skin", category: "Mobile & Device Skins", price: 250, stockCount: 50, customizable: true, description: "Classic carbon fiber texture with precision cut.", imageUrl: "https://picsum.photos/seed/cyber1/600/600" },
-      { name: "Embossed Dragon 3D", category: "Mobile & Device Skins", price: 300, stockCount: 25, customizable: true, description: "Premium 3D embossed dragon scale texture.", imageUrl: "https://picsum.photos/seed/3dskin1/600/600" },
-      { name: "iPad Pro Minimalist", category: "Mobile & Device Skins", price: 399, stockCount: 15, customizable: false, description: "Sleek protection for your iPad Pro.", imageUrl: "https://picsum.photos/seed/ipad1/600/600" },
-      { name: "AirPods Glow Skin", category: "Mobile & Device Skins", price: 250, stockCount: 40, customizable: true, description: "Glow in the dark protection for AirPods.", imageUrl: "https://picsum.photos/seed/audio1/600/600" },
-      { name: "DSLR Pro Matte", category: "Mobile & Device Skins", price: 799, stockCount: 10, customizable: false, description: "Professional grade camera skin.", imageUrl: "https://picsum.photos/seed/camera1/600/600" },
-      { name: "Matrix Laptop Skin", category: "Laptop Skins & Protection", price: 349, stockCount: 30, customizable: true, description: "Full body protection with Matrix code design.", imageUrl: "https://picsum.photos/seed/laptop1/600/600" },
-      { name: "GTR 3D Gaming Skin", category: "Laptop Skins & Protection", price: 499, stockCount: 20, customizable: false, description: "High-octane 3D textured gaming skin.", imageUrl: "https://picsum.photos/seed/gtr1/600/600" },
-      { name: "MacBook Crystal Shell", category: "Laptop Skins & Protection", price: 999, stockCount: 12, customizable: false, description: "Tough transparent crystal case.", imageUrl: "https://picsum.photos/seed/shell1/600/600" },
-      { name: "Leather Laptop Sleeve", category: "Bags, Sleeves & Organizers", price: 675, stockCount: 15, customizable: false, description: "Premium vegan leather organizer.", imageUrl: "https://picsum.photos/seed/sleeve1/600/600" },
-      { name: "Neon Grid Tech Mat", category: "Cards, Stickers & Add-ons", price: 450, stockCount: 20, customizable: false, description: "Large anti-slip desk pad for pros.", imageUrl: "https://picsum.photos/seed/mat1/600/600" },
-      { name: "Vinyl Card Skin", category: "Cards, Stickers & Add-ons", price: 149, stockCount: 100, customizable: true, description: "Upgrade your debit card style.", imageUrl: "https://picsum.photos/seed/card1/600/600" }
+      // Mobile & Device Skins
+      { name: "Standard Matrix Mobile Skin", category: "Mobile & Device Skins", price: 250, stockCount: 50, customizable: true, description: "A high-precision vinyl skin with a matte finish, offering sleek protection without the bulk. Perfect for daily tech armor.", imageUrl: "https://picsum.photos/seed/stdmob1/600/600" },
+      { name: "3D Dragon Scale Embossed Skin", category: "Mobile & Device Skins", price: 300, stockCount: 30, customizable: true, description: "Premium 3D textured skin featuring realistic dragon scale embossing. Provides exceptional grip and a tactile futuristic feel.", imageUrl: "https://picsum.photos/seed/3dmob1/600/600" },
+      { name: "iPad Pro Stealth Wrap", category: "Mobile & Device Skins", price: 399, stockCount: 15, customizable: false, description: "Full-body coverage for your iPad Pro. Engineered with heat-sync technology to keep your device cool during heavy usage.", imageUrl: "https://picsum.photos/seed/ipadwrap1/600/600" },
+      { name: "AirPods Pro Neon Glow", category: "Mobile & Device Skins", price: 250, stockCount: 40, customizable: true, description: "Custom glow-in-the-dark wrap for AirPods Pro. Ensure your buds are never lost in the dark with this vibrant tech skin.", imageUrl: "https://picsum.photos/seed/audiobuds1/600/600" },
+      { name: "DSLR Master Pro Wrap", category: "Mobile & Device Skins", price: 799, stockCount: 10, customizable: false, description: "Professional grade camera wrap designed for the toughest shoots. Weather-resistant and provides superior handling grip.", imageUrl: "https://picsum.photos/seed/campro1/600/600" },
+
+      // Laptop Skins & Protection
+      { name: "Cyber-Carbon Laptop Skin", category: "Laptop Skins & Protection", price: 349, stockCount: 25, customizable: true, description: "Total lid protection with a high-performance carbon fiber finish. Precision cut for all major laptop models.", imageUrl: "https://picsum.photos/seed/lapstd1/600/600" },
+      { name: "GTR 3D Gaming Series Skin", category: "Laptop Skins & Protection", price: 499, stockCount: 20, customizable: false, description: "Inspired by automotive precision, this 3D textured gaming skin adds a layer of aggressive style and protection to your rig.", imageUrl: "https://picsum.photos/seed/lapgtr1/600/600" },
+      { name: "MacBook Crystal Hard Shell", category: "Laptop Skins & Protection", price: 999, stockCount: 12, customizable: false, description: "Ultra-tough transparent shell that preserves the sleek aesthetic of your MacBook while shielding it from impacts.", imageUrl: "https://picsum.photos/seed/macshell1/600/600" },
+      { name: "Universal Retina Guard", category: "Laptop Skins & Protection", price: 350, stockCount: 50, customizable: false, description: "Anti-glare screen protection film. Blocks 99% of UV rays and prevents scratches on high-res laptop displays.", imageUrl: "https://picsum.photos/seed/screenguard1/600/600" },
+      { name: "Full Body Matte Armor", category: "Laptop Skins & Protection", price: 349, stockCount: 15, customizable: true, description: "Complete 360-degree protection. Covers lid, trackpad, and palm rest in a consistent matte black finish.", imageUrl: "https://picsum.photos/seed/fullarmor1/600/600" },
+
+      // Bags, Sleeves & Organizers
+      { name: "Vegan Leather Tech Sleeve", category: "Bags, Sleeves & Organizers", price: 649, stockCount: 15, customizable: false, description: "Sustainably sourced vegan leather sleeve with a plush microfiber lining. The ultimate sanctuary for your mobile workstation.", imageUrl: "https://picsum.photos/seed/bagslv1/600/600" },
+      { name: "Handle-Ready Designer Sleeve", category: "Bags, Sleeves & Organizers", price: 799, stockCount: 10, customizable: true, description: "Equipped with hidden handles and external pockets. Features custom designer patterns for the modern commuter.", imageUrl: "https://picsum.photos/seed/baghandle1/600/600" },
+      { name: "Geometric Deluxe Tote", category: "Bags, Sleeves & Organizers", price: 799, stockCount: 20, customizable: false, description: "Large capacity tote bag with internal organizers. Durable canvas with high-vibrancy geometric prints.", imageUrl: "https://picsum.photos/seed/bagtote1/600/600" },
+      { name: "Compact Cable Organizer", category: "Bags, Sleeves & Organizers", price: 349, stockCount: 30, customizable: false, description: "Keep your cables, chargers, and SD cards untangled. Fits easily into any backpack or messenger bag.", imageUrl: "https://picsum.photos/seed/bagorg1/600/600" },
+      { name: "Pro Tech Case (Large)", category: "Bags, Sleeves & Organizers", price: 699, stockCount: 15, customizable: false, description: "Hard-shell tech organizer for heavy travelers. Stores power banks, external drives, and multiple charging blocks.", imageUrl: "https://picsum.photos/seed/bagpro1/600/600" },
+
+      // Cards, Stickers & Add-ons
+      { name: "Vinyl Debit Card Skin", category: "Cards, Stickers & Add-ons", price: 149, stockCount: 100, customizable: true, description: "Upgrade your plastic. High-quality vinyl skins that work with all card readers and ATMs. Scratch-resistant.", imageUrl: "https://picsum.photos/seed/cardv1/600/600" },
+      { name: "Keyboard Meme Stickers", category: "Cards, Stickers & Add-ons", price: 19, stockCount: 500, customizable: false, description: "Individual button stickers to customize your typing experience. High-durability prints that don't fade.", imageUrl: "https://picsum.photos/seed/kbstick1/600/600" },
+      { name: "Silicon Cable Armor", category: "Cards, Stickers & Add-ons", price: 99, stockCount: 200, customizable: false, description: "Reinforce your charging cables. Prevents fraying and adds a pop of neon color to your setup.", imageUrl: "https://picsum.photos/seed/cable1/600/600" },
+      { name: "Neon Grid Desk Tech Mat", category: "Cards, Stickers & Add-ons", price: 450, stockCount: 40, customizable: false, description: "Extended desk pad with anti-slip rubber base. Features a stunning neon grid design optimized for optical mice.", imageUrl: "https://picsum.photos/seed/deskmat1/600/600" },
+      { name: "Battery Armor Wrap", category: "Cards, Stickers & Add-ons", price: 200, stockCount: 50, customizable: true, description: "Custom skins for your external power banks. Tough vinyl that shields against scuffs during travel.", imageUrl: "https://picsum.photos/seed/batt1/600/600" }
     ];
 
     try {
       for (const product of products) {
         await addDoc(collection(db, 'products'), {
           ...product,
-          createdAt: new Date().toISOString()
+          createdAt: serverTimestamp()
         });
       }
-      toast({ title: "Catalog Seeded", description: "All product categories have been initialized." });
+      toast({ title: "Full Catalog Synchronized", description: "20+ items across 4 categories have been deployed." });
     } catch (e) {
-      toast({ variant: "destructive", title: "Seeding Failed", description: "Check permissions." });
+      toast({ variant: "destructive", title: "Deployment Failed", description: "Database rejected the manifest." });
     } finally {
       setSeeding(false);
     }
@@ -77,15 +93,15 @@ export default function AdminDashboard() {
           onClick={seedCatalog} 
           disabled={seeding}
           variant="outline" 
-          className="border-primary/50 hover:bg-primary/10 text-primary font-headline uppercase text-xs"
+          className="border-primary/50 hover:bg-primary/10 text-primary font-headline uppercase text-xs glow-primary"
         >
           <Database className="mr-2 h-4 w-4" /> 
-          {seeding ? "Initializing..." : "Seed Full Catalog"}
+          {seeding ? "Initializing Protocols..." : "Deploy Full Catalog"}
         </Button>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card className="bg-card/50 border-primary/20 shadow-lg glow-primary/5">
+        <Card className="bg-card/50 border-primary/20 shadow-lg">
           <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
             <CardTitle className="text-sm font-headline uppercase tracking-widest font-bold">Revenue (INR)</CardTitle>
             <DollarSign className="h-4 w-4 text-primary" />
@@ -148,9 +164,9 @@ export default function AdminDashboard() {
         <Card className="lg:col-span-3 bg-card/50 border-destructive/20">
           <CardHeader>
             <CardTitle className="font-headline uppercase font-bold text-lg flex items-center gap-2">
-              <AlertCircle className="h-5 w-5 text-destructive" /> Stock Alerts
+              <AlertCircle className="h-5 w-5 text-destructive" /> Critical Protocols
             </CardTitle>
-            <CardDescription>Decommissioned or low stock units.</CardDescription>
+            <CardDescription>Attention required for stock replenishing.</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
@@ -162,6 +178,7 @@ export default function AdminDashboard() {
                 <span className="font-body font-medium">Retro Wave Shell</span>
                 <span className="font-headline font-black text-destructive">8 LEFT</span>
               </div>
+              <p className="text-xs text-muted-foreground text-center italic">Stock count automatically updates on customer checkout.</p>
             </div>
           </CardContent>
         </Card>

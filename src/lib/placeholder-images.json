@@ -1,3 +1,82 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "hero-bg",
+      "description": "Futuristic neon city background",
+      "imageUrl": "https://images.unsplash.com/photo-1573767291321-c0af2eaf5266?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxjeWJlcnB1bmslMjBjaXR5fGVufDB8fHx8MTc3MjQ3MTcwNXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "cyberpunk city"
+    },
+    {
+      "id": "mob-std-1",
+      "description": "Carbon Fiber Phone Skin",
+      "imageUrl": "https://images.unsplash.com/photo-1601592690120-a7cefd9c477a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxwaG9uZSUyMHNraW4lMjBjYXJib258ZW58MHx8fHwxNzcyNTM3NTc3fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "phone skin carbon"
+    },
+    {
+      "id": "mob-3d-1",
+      "description": "3D Embossed Dragon Skin",
+      "imageUrl": "https://images.unsplash.com/photo-1678446332668-301c5ea11739?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHwzZCUyMHBob25lJTIwdGV4dHVyZXxlbnwwfHx8fDE3NzI1Mzc1Nzd8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "3d phone texture"
+    },
+    {
+      "id": "ipad-1",
+      "description": "iPad Pro Matte Wrap",
+      "imageUrl": "https://images.unsplash.com/photo-1636997112337-4f0a138fd377?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHx0YWJsZXQlMjBza2lufGVufDB8fHx8MTc3MjUzNzU3N3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "tablet skin"
+    },
+    {
+      "id": "audio-1",
+      "description": "AirPods Pro Glow Skin",
+      "imageUrl": "https://images.unsplash.com/photo-1748369830076-54433f54a74d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxlYXJidWQlMjBza2lufGVufDB8fHx8MTc3MjUzNzU3N3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "earbud skin"
+    },
+    {
+      "id": "cam-1",
+      "description": "DSLR Professional Wrap",
+      "imageUrl": "https://images.unsplash.com/photo-1732861612232-50cbe19c1ae5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8Y2FtZXJhJTIwc2tpbnxlbnwwfHx8fDE3NzI1Mzc1Nzd8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "camera skin"
+    },
+    {
+      "id": "lap-std-1",
+      "description": "Matrix Laptop Skin",
+      "imageUrl": "https://images.unsplash.com/photo-1632893037520-7c223d9495f0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxsYXB0b3AlMjBza2luJTIwbWF0cml4fGVufDB8fHx8MTc3MjUzNzU3N3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "laptop skin matrix"
+    },
+    {
+      "id": "lap-3d-1",
+      "description": "GTR 3D Gaming Skin",
+      "imageUrl": "https://images.unsplash.com/photo-1718607601475-3ff032a2322b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxnYW1pbmclMjBsYXB0b3AlMjBza2lufGVufDB8fHx8MTc3MjUzNzU3N3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "gaming laptop skin"
+    },
+    {
+      "id": "mac-shell-1",
+      "description": "MacBook Crystal Case",
+      "imageUrl": "https://images.unsplash.com/photo-1676567463926-b0378e36a209?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxtYWNib29rJTIwc2hlbGwlMjBjYXNlfGVufDB8fHx8MTc3MjUzNzU3N3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "macbook shell case"
+    },
+    {
+      "id": "bag-1",
+      "description": "Leather Laptop Sleeve",
+      "imageUrl": "https://images.unsplash.com/photo-1509291832281-6323f499fc80?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxsYXB0b3AlMjBzbGVldmUlMjBsZWF0aGVyfGVufDB8fHx8MTc3MjUzNzU3N3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "laptop sleeve leather"
+    },
+    {
+      "id": "tote-1",
+      "description": "Cyber-Pattern Tote Bag",
+      "imageUrl": "https://images.unsplash.com/photo-1761345880123-c7c3b160c1d4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHx0b3RlJTIwYmFnJTIwcGF0dGVybnxlbnwwfHx8fDE3NzI1Mzc1Nzd8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "tote bag pattern"
+    },
+    {
+      "id": "card-1",
+      "description": "Vinyl Card Skin",
+      "imageUrl": "https://images.unsplash.com/photo-1678554832890-2ea5d37278af?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxjcmVkaXQlMjBjYXJkJTIwc2tpbnxlbnwwfHx8fDE3NzI1Mzc1Nzd8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "credit card skin"
+    },
+    {
+      "id": "mat-1",
+      "description": "Neon Grid Desk Mat",
+      "imageUrl": "https://images.unsplash.com/photo-1760462787860-e2b245ed55ed?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHx0ZWNoJTIwZGVzayUyMG1hdHxlbnwwfHx8fDE3NzI1Mzc1Nzd8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "tech desk mat"
+    }
+  ]
 }
