@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -25,25 +26,22 @@ export function useAuth() {
         
         const userRef = doc(db, 'users', firebaseUser.uid);
         
-        // Listen for real-time updates to the user document (especially isAdmin flag)
         unsubscribeDoc = onSnapshot(userRef, (docSnap) => {
           if (docSnap.exists()) {
             setIsAdmin(docSnap.data().isAdmin === true);
           } else {
-            // Initial user creation
             setDoc(userRef, {
               id: firebaseUser.uid,
               email: firebaseUser.email || '',
               displayName: firebaseUser.displayName || 'Anonymous User',
               photoURL: firebaseUser.photoURL || '',
-              isAdmin: false, // Default to false
+              isAdmin: false,
               createdAt: new Date().toISOString(),
             });
             setIsAdmin(false);
           }
           setLoading(false);
         }, (error) => {
-          // Internal firestore errors are handled by the global error listener
           setLoading(false);
         });
 
@@ -67,18 +65,20 @@ export function useAuth() {
       const provider = new GoogleAuthProvider();
       await signInWithPopup(auth, provider);
     } catch (error: any) {
-      if (error.code === 'auth/popup-closed-by-user') {
+      // Explicitly handle the popup closed error to prevent runtime crash
+      if (error.code === 'auth/popup-closed-by-user' || error.code === 'auth/popup-blocked') {
         toast({
-          title: "Sign-in Cancelled",
-          description: "The authentication window was closed before completion.",
+          title: "Sign-in Interrupted",
+          description: "The authentication window was closed. Try again when you're ready.",
         });
-      } else {
-        toast({
-          variant: "destructive",
-          title: "Authentication Failed",
-          description: error.message || "An unexpected error occurred during sign-in.",
-        });
+        return; 
       }
+      
+      toast({
+        variant: "destructive",
+        title: "Authentication Failed",
+        description: error.message || "An unexpected error occurred during sign-in.",
+      });
     }
   };
 
@@ -102,13 +102,13 @@ export function useAuth() {
       await updateDoc(userRef, { isAdmin: true });
       toast({
         title: "Admin Privileges Granted",
-        description: "You now have access to the Admin Lab.",
+        description: "Welcome to Mission Control, Commander.",
       });
     } catch (error: any) {
       toast({
         variant: "destructive",
         title: "Access Denied",
-        description: "Could not update administrative status.",
+        description: "Unauthorized attempt to elevate privileges detected.",
       });
     }
   };
