@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -12,7 +13,9 @@ import {
   createUserWithEmailAndPassword,
   updateProfile,
   updateEmail,
-  updatePassword
+  updatePassword,
+  reauthenticateWithCredential,
+  EmailAuthProvider
 } from 'firebase/auth';
 import { doc, setDoc, updateDoc, onSnapshot } from 'firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
@@ -49,7 +52,7 @@ export function useAuth() {
               photoURL: firebaseUser.photoURL || '',
               isAdmin: false,
               createdAt: new Date().toISOString(),
-            });
+            }, { merge: true });
             setIsAdmin(false);
           }
           setLoading(false);
@@ -167,7 +170,7 @@ export function useAuth() {
       toast({ title: "Email Updated", description: "Identity relay shifted to " + newEmail });
     } catch (error: any) {
       if (error.code === 'auth/requires-recent-login') {
-        toast({ variant: "destructive", title: "Action Blocked", description: "Please re-authenticate to change sensitive data." });
+        toast({ variant: "destructive", title: "Session Expired", description: "Please disconnect and reconnect to update sensitive relay protocols." });
       } else {
         toast({ variant: "destructive", title: "Relay Failed", description: error.message });
       }
@@ -181,7 +184,7 @@ export function useAuth() {
       toast({ title: "Protocol Updated", description: "Your access password has been rotated." });
     } catch (error: any) {
       if (error.code === 'auth/requires-recent-login') {
-        toast({ variant: "destructive", title: "Action Blocked", description: "Please re-authenticate to rotate protocols." });
+        toast({ variant: "destructive", title: "Session Expired", description: "Please disconnect and reconnect to rotate your security protocols." });
       } else {
         toast({ variant: "destructive", title: "Protocol Failure", description: error.message });
       }
