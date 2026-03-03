@@ -1,31 +1,30 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    /* Default: Cyber-Neon */
-    --background: 200 15% 9%;
-    --foreground: 187 100% 70%;
-    --card: 200 15% 12%;
-    --card-foreground: 187 100% 70%;
-    --popover: 200 15% 10%;
-    --popover-foreground: 187 100% 70%;
-    --primary: 210 100% 53%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 187 100% 70%;
-    --secondary-foreground: 200 15% 9%;
-    --muted: 200 15% 15%;
-    --muted-foreground: 187 40% 60%;
-    --accent: 187 100% 70%;
-    --accent-foreground: 200 15% 9%;
+    /* Cyber-Neon: High-contrast, Deep Space */
+    --background: 230 25% 4%;
+    --foreground: 180 100% 90%;
+    --card: 230 25% 7%;
+    --card-foreground: 180 100% 95%;
+    --popover: 230 25% 6%;
+    --popover-foreground: 180 100% 90%;
+    --primary: 190 100% 50%;
+    --primary-foreground: 230 25% 4%;
+    --secondary: 280 100% 60%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 230 20% 15%;
+    --muted-foreground: 180 20% 60%;
+    --accent: 190 100% 50%;
+    --accent-foreground: 230 25% 4%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    --border: 200 15% 20%;
-    --input: 200 15% 20%;
-    --ring: 210 100% 53%;
-    --radius: 0.75rem;
+    --border: 230 20% 15%;
+    --input: 230 20% 15%;
+    --ring: 190 100% 50%;
+    --radius: 1.25rem;
   }
 
   .theme-minimalist {
@@ -49,23 +48,23 @@
   }
 
   .theme-retro {
-    --background: 340 70% 95%;
-    --foreground: 340 100% 20%;
-    --card: 340 60% 98%;
-    --card-foreground: 340 100% 20%;
-    --popover: 340 60% 98%;
-    --popover-foreground: 340 100% 20%;
-    --primary: 340 100% 50%;
+    --background: 320 40% 5%;
+    --foreground: 320 100% 90%;
+    --card: 320 40% 10%;
+    --card-foreground: 320 100% 95%;
+    --popover: 320 40% 8%;
+    --popover-foreground: 320 100% 90%;
+    --primary: 320 100% 60%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 45 100% 50%;
-    --secondary-foreground: 340 100% 20%;
-    --muted: 45 100% 90%;
-    --muted-foreground: 340 40% 40%;
-    --accent: 190 100% 50%;
-    --accent-foreground: 340 100% 20%;
-    --border: 340 30% 80%;
-    --input: 340 30% 80%;
-    --ring: 340 100% 50%;
+    --secondary: 50 100% 50%;
+    --secondary-foreground: 320 40% 5%;
+    --muted: 320 30% 20%;
+    --muted-foreground: 320 20% 60%;
+    --accent: 180 100% 50%;
+    --accent-foreground: 320 40% 5%;
+    --border: 320 30% 25%;
+    --input: 320 30% 25%;
+    --ring: 320 100% 60%;
   }
 }
 
@@ -74,8 +73,11 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground transition-colors duration-500;
+    @apply bg-background text-foreground transition-colors duration-700 antialiased;
     font-feature-settings: "rlig" 1, "calt" 1;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-headline;
   }
 }
 
@@ -83,10 +85,38 @@
   perspective: 1000px;
 }
 
-.glow-primary {
-  box-shadow: 0 0 20px -5px hsl(var(--primary));
+.glass-card {
+  @apply bg-card/40 backdrop-blur-xl border border-white/10 shadow-[0_8px_32px_0_rgba(0,0,0,0.4)];
 }
 
-.glow-accent {
-  box-shadow: 0 0 20px -5px hsl(var(--accent));
+.glow-primary {
+  box-shadow: 0 0 25px -5px hsla(var(--primary), 0.5);
+}
+
+.glow-text-primary {
+  text-shadow: 0 0 15px hsla(var(--primary), 0.5);
+}
+
+.neon-border {
+  @apply relative overflow-hidden;
+}
+
+.neon-border::after {
+  content: '';
+  @apply absolute inset-0 border border-primary/20 pointer-events-none rounded-[inherit];
+}
+
+.neon-border:hover::after {
+  @apply border-primary/50 shadow-[0_0_15px_hsla(var(--primary),0.3)];
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  @apply bg-background;
+}
+::-webkit-scrollbar-thumb {
+  @apply bg-primary/20 rounded-full hover:bg-primary/40 transition-colors;
 }
