@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/hooks/use-auth';
 import { Button } from '@/components/ui/button';
-import { Shield, ShoppingBag, User, LogOut, LayoutDashboard, UserPlus, Menu, X } from 'lucide-react';
+import { Shield, ShoppingBag, User, LogOut, LayoutDashboard, UserPlus, Menu, X, LogIn } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,7 +16,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export function Navbar() {
-  const { user, signIn, signOut, isAdmin, grantAdminStatus } = useAuth();
+  const { user, signOut, isAdmin, grantAdminStatus } = useAuth();
   const [cartCount, setCartCount] = useState(0);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -97,7 +97,7 @@ export function Navbar() {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-64 bg-card/90 backdrop-blur-xl border-white/10 p-2 rounded-2xl shadow-2xl">
                   <div className="flex flex-col space-y-1 p-3">
-                    <p className="text-xs font-headline uppercase font-black tracking-widest">{user.displayName}</p>
+                    <p className="text-xs font-headline uppercase font-black tracking-widest">{user.displayName || 'User Profile'}</p>
                     <p className="text-[10px] text-muted-foreground truncate">{user.email}</p>
                   </div>
                   <DropdownMenuSeparator className="bg-white/5" />
@@ -116,7 +116,7 @@ export function Navbar() {
                       className="cursor-pointer focus:bg-accent/10 text-accent rounded-xl py-2" 
                       onClick={grantAdminStatus}
                     >
-                      <UserPlus className="mr-2 h-3 w-3" /> <span className="font-headline uppercase text-[10px] tracking-widest">Get Admin</span>
+                      <UserPlus className="mr-2 h-3 w-3" /> <span className="font-headline uppercase text-[10px] tracking-widest">Become Admin (Dev)</span>
                     </DropdownMenuItem>
                   )}
 
@@ -127,8 +127,8 @@ export function Navbar() {
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              <Button onClick={signIn} className="font-headline uppercase text-[10px] tracking-[0.2em] rounded-full px-8 h-10 glow-primary transition-transform hover:scale-105">
-                Connect
+              <Button asChild className="font-headline uppercase text-[10px] tracking-[0.2em] rounded-full px-8 h-10 glow-primary transition-transform hover:scale-105">
+                <Link href="/login">Connect</Link>
               </Button>
             )}
             
@@ -154,6 +154,9 @@ export function Navbar() {
               <Link href="/about" onClick={() => setIsMobileMenuOpen(false)}>Drops</Link>
               {isAdmin && (
                 <Link href="/admin" className="text-accent" onClick={() => setIsMobileMenuOpen(false)}>Admin Panel</Link>
+              )}
+              {!user && (
+                <Link href="/login" className="text-primary" onClick={() => setIsMobileMenuOpen(false)}>Connect</Link>
               )}
             </div>
           </motion.div>

@@ -1,16 +1,26 @@
-
 'use client';
 
 import { useState, useEffect } from 'react';
 import { useAuth as useFirebaseAuth, useFirestore } from '@/firebase';
-import { signInWithPopup, signOut as firebaseSignOut, onAuthStateChanged, User, GoogleAuthProvider } from 'firebase/auth';
+import { 
+  signInWithPopup, 
+  signOut as firebaseSignOut, 
+  onAuthStateChanged, 
+  User, 
+  GoogleAuthProvider,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  updateProfile
+} from 'firebase/auth';
 import { doc, setDoc, updateDoc, onSnapshot } from 'firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
+import { useRouter } from 'next/navigation';
 
 export function useAuth() {
   const auth = useFirebaseAuth();
   const db = useFirestore();
   const { toast } = useToast();
+  const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -64,21 +74,43 @@ export function useAuth() {
     try {
       const provider = new GoogleAuthProvider();
       await signInWithPopup(auth, provider);
+      router.push('/');
     } catch (error: any) {
-      // Explicitly handle the popup closed error to prevent runtime crash
       if (error.code === 'auth/popup-closed-by-user' || error.code === 'auth/popup-blocked') {
         toast({
           title: "Sign-in Interrupted",
-          description: "The authentication window was closed. Try again when you're ready.",
+          description: "The authentication window was closed.",
         });
         return; 
       }
-      
       toast({
         variant: "destructive",
         title: "Authentication Failed",
-        description: error.message || "An unexpected error occurred during sign-in.",
+        description: error.message,
       });
+    }
+  };
+
+  const loginWithEmail = async (email: string, pass: string) => {
+    if (!auth) return;
+    try {
+      await signInWithEmailAndPassword(auth, email, pass);
+      router.push('/');
+      toast({ title: "Welcome Back", description: "Access granted to the armory." });
+    } catch (error: any) {
+      toast({ variant: "destructive", title: "Login Failed", description: error.message });
+    }
+  };
+
+  const signupWithEmail = async (email: string, pass: string, name: string) => {
+    if (!auth) return;
+    try {
+      const res = await createUserWithEmailAndPassword(auth, email, pass);
+      await updateProfile(res.user, { displayName: name });
+      router.push('/');
+      toast({ title: "Account Initialized", description: "Welcome to the collective, " + name });
+    } catch (error: any) {
+      toast({ variant: "destructive", title: "Signup Failed", description: error.message });
     }
   };
 
@@ -86,6 +118,7 @@ export function useAuth() {
     if (!auth) return;
     try {
       await firebaseSignOut(auth);
+      router.push('/');
     } catch (error: any) {
       toast({
         variant: "destructive",
@@ -108,10 +141,10 @@ export function useAuth() {
       toast({
         variant: "destructive",
         title: "Access Denied",
-        description: "Unauthorized attempt to elevate privileges detected.",
+        description: "Unauthorized elevation attempt.",
       });
     }
   };
 
-  return { user, loading, isAdmin, signIn, signOut, grantAdminStatus };
+  return { user, loading, isAdmin, signIn, loginWithEmail, signupWithEmail, signOut, grantAdminStatus };
 }
