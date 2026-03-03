@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/hooks/use-auth';
 import { Button } from '@/components/ui/button';
-import { Shield, ShoppingBag, User, LogOut, LayoutDashboard, UserPlus, Menu, X, LogIn } from 'lucide-react';
+import { Shield, ShoppingBag, User, LogOut, LayoutDashboard, UserPlus, Menu, X } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -89,7 +89,7 @@ export function Navbar() {
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Avatar className="h-9 w-9 cursor-pointer ring-2 ring-white/5 transition-all hover:ring-primary/50 overflow-hidden">
-                    <AvatarImage src={user.photoURL || ''} />
+                    <AvatarImage src={user.photoURL || undefined} />
                     <AvatarFallback className="bg-primary/10 text-primary">
                       <User className="h-4 w-4" />
                     </AvatarFallback>
@@ -146,7 +146,6 @@ export function Navbar() {
         </div>
       </div>
 
-      {/* Mobile Menu Overlay */}
       <AnimatePresence>
         {isMobileMenuOpen && (
           <motion.div 

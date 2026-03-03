@@ -52,7 +52,7 @@ export default function ProfilePage() {
           <motion.div 
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="inline-flex h-20 w-20 items-center justify-center rounded-full bg-primary/10 border border-primary/20 mb-6"
+            className="inline-flex h-20 w-20 items-center justify-center rounded-full bg-primary/10 border border-primary/20 mb-6 shadow-[0_0_30px_hsla(var(--primary),0.2)]"
           >
             <User className="h-10 w-10 text-primary glow-text-primary" />
           </motion.div>
@@ -65,13 +65,12 @@ export default function ProfilePage() {
         </div>
 
         <div className="grid gap-8 md:grid-cols-3">
-          {/* Avatar & Quick Stats */}
           <div className="md:col-span-1 space-y-6">
             <Card className="glass-card border-white/5 rounded-[2.5rem] overflow-hidden">
               <CardContent className="pt-10 flex flex-col items-center">
                 <div className="relative group mb-6">
-                  <Avatar className="h-32 w-32 ring-4 ring-primary/20 transition-all group-hover:ring-primary/50">
-                    <AvatarImage src={user?.photoURL || ''} />
+                  <Avatar className="h-32 w-32 ring-4 ring-primary/20 transition-all group-hover:ring-primary/50 shadow-2xl">
+                    <AvatarImage src={user?.photoURL || undefined} />
                     <AvatarFallback className="bg-primary/10 text-primary text-4xl">
                       {user?.displayName?.[0] || 'U'}
                     </AvatarFallback>
@@ -102,7 +101,7 @@ export default function ProfilePage() {
               </CardContent>
             </Card>
 
-            <div className="bg-card/30 border border-white/5 p-6 rounded-[2rem] space-y-4">
+            <div className="bg-card/30 border border-white/5 p-6 rounded-[2rem] space-y-4 shadow-xl backdrop-blur-md">
               <div className="flex items-center gap-3 text-primary">
                 <Shield className="h-4 w-4" />
                 <span className="text-[10px] font-headline uppercase font-black tracking-widest">Security Clearance</span>
@@ -113,10 +112,8 @@ export default function ProfilePage() {
             </div>
           </div>
 
-          {/* Form Controls */}
           <div className="md:col-span-2 space-y-8">
-            {/* Identity Settings */}
-            <Card className="glass-card border-white/5 rounded-[2.5rem]">
+            <Card className="glass-card border-white/5 rounded-[2.5rem] shadow-2xl">
               <CardHeader>
                 <CardTitle className="font-headline text-lg uppercase font-bold flex items-center gap-2">
                   <Zap className="h-5 w-5 text-primary" /> Core Identity
@@ -131,7 +128,7 @@ export default function ProfilePage() {
                       value={name} 
                       onChange={(e) => setName(e.target.value)}
                       placeholder="e.g. V_CYBERPUNK"
-                      className="bg-background/50 border-white/10 rounded-2xl h-12 px-5"
+                      className="bg-background/50 border-white/10 rounded-2xl h-12 px-5 focus:border-primary/50 transition-all"
                     />
                   </div>
                   <div className="space-y-2">
@@ -140,18 +137,17 @@ export default function ProfilePage() {
                       value={photoURL} 
                       onChange={(e) => setPhotoURL(e.target.value)}
                       placeholder="https://images.unsplash.com/..."
-                      className="bg-background/50 border-white/10 rounded-2xl h-12 px-5"
+                      className="bg-background/50 border-white/10 rounded-2xl h-12 px-5 focus:border-primary/50 transition-all"
                     />
                   </div>
-                  <Button type="submit" disabled={isUpdating} className="w-full h-12 rounded-2xl font-headline uppercase tracking-widest glow-primary">
+                  <Button type="submit" disabled={isUpdating} className="w-full h-12 rounded-2xl font-headline uppercase tracking-widest glow-primary shadow-lg">
                     {isUpdating ? <RefreshCw className="h-4 w-4 animate-spin" /> : "Sync Identity"}
                   </Button>
                 </form>
               </CardContent>
             </Card>
 
-            {/* Relay Settings */}
-            <Card className="glass-card border-white/5 rounded-[2.5rem]">
+            <Card className="glass-card border-white/5 rounded-[2.5rem] shadow-2xl">
               <CardHeader>
                 <CardTitle className="font-headline text-lg uppercase font-bold flex items-center gap-2">
                   <Mail className="h-5 w-5 text-accent" /> Communication Relay
@@ -165,18 +161,17 @@ export default function ProfilePage() {
                       type="email"
                       value={email} 
                       onChange={(e) => setEmail(e.target.value)}
-                      className="bg-background/50 border-white/10 rounded-2xl h-12 px-5"
+                      className="bg-background/50 border-white/10 rounded-2xl h-12 px-5 focus:border-accent/50 transition-all"
                     />
                   </div>
-                  <Button type="submit" disabled={isUpdating} variant="outline" className="w-full h-12 rounded-2xl font-headline uppercase tracking-widest border-accent/20 hover:bg-accent/10 hover:text-accent">
+                  <Button type="submit" disabled={isUpdating} variant="outline" className="w-full h-12 rounded-2xl font-headline uppercase tracking-widest border-accent/20 hover:bg-accent/10 hover:text-accent shadow-md">
                     {isUpdating ? <RefreshCw className="h-4 w-4 animate-spin" /> : "Update Relay Address"}
                   </Button>
                 </form>
               </CardContent>
             </Card>
 
-            {/* Protocol Rotation */}
-            <Card className="glass-card border-white/5 rounded-[2.5rem]">
+            <Card className="glass-card border-white/5 rounded-[2.5rem] shadow-2xl">
               <CardHeader>
                 <CardTitle className="font-headline text-lg uppercase font-bold flex items-center gap-2">
                   <Key className="h-5 w-5 text-secondary" /> Protocol Rotation
@@ -191,10 +186,10 @@ export default function ProfilePage() {
                       value={password} 
                       onChange={(e) => setPassword(e.target.value)}
                       placeholder="••••••••"
-                      className="bg-background/50 border-white/10 rounded-2xl h-12 px-5"
+                      className="bg-background/50 border-white/10 rounded-2xl h-12 px-5 focus:border-secondary/50 transition-all"
                     />
                   </div>
-                  <Button type="submit" disabled={isUpdating} variant="outline" className="w-full h-12 rounded-2xl font-headline uppercase tracking-widest border-secondary/20 hover:bg-secondary/10 hover:text-secondary">
+                  <Button type="submit" disabled={isUpdating} variant="outline" className="w-full h-12 rounded-2xl font-headline uppercase tracking-widest border-secondary/20 hover:bg-secondary/10 hover:text-secondary shadow-md">
                     {isUpdating ? <RefreshCw className="h-4 w-4 animate-spin" /> : "Rotate Protocol"}
                   </Button>
                 </form>
