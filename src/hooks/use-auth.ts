@@ -1,14 +1,15 @@
-
 'use client';
 
 import { useState, useEffect } from 'react';
 import { useAuth as useFirebaseAuth, useFirestore } from '@/firebase';
 import { signInWithPopup, signOut as firebaseSignOut, onAuthStateChanged, User, GoogleAuthProvider } from 'firebase/auth';
-import { doc, getDoc, setDoc, updateDoc, onSnapshot, serverTimestamp } from 'firebase/firestore';
+import { doc, setDoc, updateDoc, onSnapshot } from 'firebase/firestore';
+import { useToast } from '@/hooks/use-toast';
 
 export function useAuth() {
   const auth = useFirebaseAuth();
   const db = useFirestore();
+  const { toast } = useToast();
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -42,7 +43,7 @@ export function useAuth() {
           }
           setLoading(false);
         }, (error) => {
-          console.error("User doc listener error:", error);
+          // Internal firestore errors are handled by the global error listener
           setLoading(false);
         });
 
@@ -65,8 +66,19 @@ export function useAuth() {
     try {
       const provider = new GoogleAuthProvider();
       await signInWithPopup(auth, provider);
-    } catch (error) {
-      console.error('Sign in error:', error);
+    } catch (error: any) {
+      if (error.code === 'auth/popup-closed-by-user') {
+        toast({
+          title: "Sign-in Cancelled",
+          description: "The authentication window was closed before completion.",
+        });
+      } else {
+        toast({
+          variant: "destructive",
+          title: "Authentication Failed",
+          description: error.message || "An unexpected error occurred during sign-in.",
+        });
+      }
     }
   };
 
@@ -74,8 +86,12 @@ export function useAuth() {
     if (!auth) return;
     try {
       await firebaseSignOut(auth);
-    } catch (error) {
-      console.error('Sign out error:', error);
+    } catch (error: any) {
+      toast({
+        variant: "destructive",
+        title: "Sign-out Failed",
+        description: error.message,
+      });
     }
   };
 
@@ -84,8 +100,16 @@ export function useAuth() {
     try {
       const userRef = doc(db, 'users', user.uid);
       await updateDoc(userRef, { isAdmin: true });
-    } catch (error) {
-      console.error('Grant admin error:', error);
+      toast({
+        title: "Admin Privileges Granted",
+        description: "You now have access to the Admin Lab.",
+      });
+    } catch (error: any) {
+      toast({
+        variant: "destructive",
+        title: "Access Denied",
+        description: "Could not update administrative status.",
+      });
     }
   };
 
